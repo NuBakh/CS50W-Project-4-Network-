@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+  {# Check if there are any followers to display #}
+  {% if follower_users %}
+    <ul>
+      {# Loop through each follower's username and display it as a link to their profile #}
+      {% for user in follower_users %}
+        <li>
+          <a href="{% url 'profile' user %}" class="userpost">{{ user }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+     
+{% endblock %}

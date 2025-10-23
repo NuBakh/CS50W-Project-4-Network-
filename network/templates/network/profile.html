@@ -1,0 +1,103 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {# Display the username of the profile being viewed #}
+    <h2>{{ profile_user.username }}</h2>
+
+    {# Section showing follower and following counts #}
+    <div class='follow-detail'>
+        <div>
+            {# Link to see the followers of this user #}
+            <a href="{% url 'showFollowers' username=profile_user.username %}">Followers</a>
+            <div class="follow">{{ followerNumber }}</div>
+        </div>
+
+        <div>
+            {# Link to see the users this user is following #}
+            <a href="{% url 'showFollowing' username=profile_user.username %}">Following</a>
+            <div class="follow">{{ followingNumber }}</div>
+        </div>
+    </div>
+
+    {# New Post form: visible only if logged-in user is viewing their own profile #}
+    {% if request.user.is_authenticated and request.user == profile_user %}
+        <div class="create-post">
+            <label class="new-post">New Post</label>
+            <form action="{% url 'index' %}" method="post">
+                {% csrf_token %}
+                {# Render the Django form for new post #}
+                {{ form }}
+                <input type="submit" value="Post" class="submit btn btn-primary">
+            </form>
+        </div>
+    {% endif %} 
+
+    {# Follow/Unfollow button: visible only if viewing another user's profile #}
+    <form method="POST" action="{% url 'follow_user' profile_user.username %}" class="follow-detail">
+        {% csrf_token %}
+        {% if profile_user.username != request.user.username %}
+            {% if followstatus %}
+                <button type="submit" name="action" value="unfollow" class="btn btn-primary">Unfollow</button>
+            {% else %}
+                <button type="submit" name="action" value="follow" class="btn btn-primary">Follow</button>
+            {% endif %}
+        {% endif %}
+    </form>
+
+    {# Loop through all posts by this user and display them #}
+    {% for post in posts %}
+        {% if profile_user.username %}
+            <div class="posts" data-post-id="{{ post.id }}">
+                <div class="detail-post">
+                    {# CSRF token for AJAX requests (edit/delete/like) #}
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    {# Display post author's username with link to their profile #}
+                    <div><a href="{% url 'profile' post.user.username %}" class="userpost">{{ post.user.username }}</a></div>
+
+                    {# Edit/Delete buttons only for the post owner #}
+                    {% if user == post.user %}
+                        <div class="btn-group">
+                            <p class="edit btn btn-outline-primary">Edit</p>
+                            <p class="delete btn btn-outline-primary">Remove</p>
+                        </div>
+                    {% endif %}
+
+                    {# Post content and timestamp #}
+                    <div class="post-content">{{ post.content }}</div>
+                    <div class="timestamp">{{ post.timestamp }}</div>
+
+                    {# Like button: changes text dynamically based on user's like status #}
+                    <button class="like btn btn-outline-info">
+                        {% if user in post.likes.all %}
+                            Unlike
+                        {% else %}
+                            Like
+                        {% endif %}
+                    </button>
+                    <span class="like-count">{{ post.likes.count }}</span>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {# Pagination controls: previous/next links and current page info #}
+    <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ posts.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+            </span>
+
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">next</a>
+                <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% endblock %}

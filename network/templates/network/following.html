@@ -1,0 +1,68 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+   <h2> All posts</h2>
+
+   {# Loop through all posts passed from the view #}
+    {% for post in posts %}
+           <div class="posts" data-post-id="{{post.id}}">
+        <div class="detail-post" >
+
+            {# Display the username of the post author, link to their profile #}
+            <div><a  href="{% url 'profile' post.user.username %}" class="userpost">{{post.user.username}}</a></div>
+
+            {# CSRF token needed for AJAX POST requests (like/edit/delete) #}
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+            {# Show Edit and Delete buttons only if the current user is the author of the post #}
+             {% if user == post.user %}
+                    <div  class="btn-group">
+                        <p class="edit btn btn-outline-primary" >Edit</p>
+                        <p class="delete btn btn-outline-primary">Remove</p>
+                    </div>
+             {% endif %}
+
+            {# Display post content and timestamp #}
+            <div class="post-content"> {{post.content}}</div>
+            <div class="timestamp"> {{post.timestamp}}</div>
+
+            {# Like button: text changes depending on whether the current user has liked the post #}
+            <button class="like btn btn-outline-info">
+                    {% if user in post.likes.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+            </button>
+
+            {# Display the number of likes for this post #}
+            <span class="like-count">{{post.likes.count}}</span>
+
+        </div>
+    </div>
+
+    {# If there are no posts to show (empty QuerySet), display a message #}
+{% empty %}
+    <p>You are not following anyone yet.</p>
+{% endfor %}
+
+  {# Pagination controls: previous/next links, current page info #}
+  <div class="pagination">
+        <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ posts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">next</a>
+            <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

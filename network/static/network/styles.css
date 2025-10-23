@@ -1,0 +1,100 @@
+.create-post, .posts{
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    margin: clamp(1rem, 3vw, 2rem)
+}
+
+.posts{
+    display: block;
+}
+
+
+h2,.new-post, form, .detail-post{
+    padding: 0.95vw;
+
+}
+
+.save{
+    margin-left: 0.5rem;
+    max-height: fit-content;
+    margin-top: 0.5rem;
+
+}
+.divContainer{
+    display: flex;
+}
+
+
+.new-post, .userpost{
+    font-weight: 700;
+    font-size: larger;
+}
+
+.submit{
+    margin-top: 0.5vw;
+}
+
+
+label[for="id_content"] {
+    display: none;
+}
+
+.edit,.delete{
+    color: #007bff;
+    font-size: larger;
+    cursor: pointer;
+}
+
+.timestamp{
+    color: #575757;
+
+}
+
+
+.pagination{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    font-size: larger;
+    
+}
+
+
+.follow-detail{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    margin: clamp(1rem, 3vw, 2rem);
+    font-size: larger;
+    
+}
+
+.follow{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+li{list-style-type: none;}
+
+
+.post-actions {
+  display: flex;
+  gap: 0.8rem;
+  cursor: pointer;
+}
+.post-actions i:hover {
+  color: crimson;
+}
+
+
+.posts:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-5px);
+    transition: all 0.5s ease;
+}
+
+
+
+

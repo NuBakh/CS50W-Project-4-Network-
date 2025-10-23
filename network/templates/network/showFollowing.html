@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+  {# Check if there are any users that the profile user is following #}
+  {% if following_users %}
+    <ul>
+      {# Loop through each following user's username and display it as a link to their profile #}
+      {% for user in following_users %}
+        <li>
+          <a href="{% url 'profile' user %}" class="userpost">{{ user }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+     
+{% endblock %}
